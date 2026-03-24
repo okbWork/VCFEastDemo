@@ -1,0 +1,103 @@
+/* REXX */
+/**********************************************************************/
+/*   CMS APPLICATION FOR PRINTING BANNERS AT VCF                      */
+/*                dev by OKY @ IBM                                    */
+/*   FUNCTION: allows users to print banners of whatever text         */
+/*    they'd like. Comes with 3 font options: cursive, giant,         */
+/*    and block.                                                      */
+/*                                                                    */
+/**********************************************************************/
+ 
+hi = '1DE8'x               /*  used to begin highlighting of text     */
+lo = '1D60'x               /*  used to end highlighting of text       */
+ 
+ADDRESS ISPEXEC
+ 
+/* Initialize variables */
+FONTS = ''
+MSG = ''
+ZCMD = ''
+ 
+/* Display panel in loop until user exits */
+DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
+ 
+  /* Display the panel */
+  "DISPLAY PANEL(VCFPRINT)"
+ 
+  /* Check if user pressed PF3 or cancelled */
+  IF RC = 8 THEN DO
+    VCFHOME
+  END
+ 
+  /* Get variables from panel */
+  "VGET (F MSG ZCMD) PROFILE"
+ 
+  /* Convert to uppercase for processing */
+  FONTS = F
+  UPPER FONTS
+  UPPER ZCMD
+  /* Validate and set font */
+  Font = 'nootnut'
+  SELECT
+    WHEN FONTS = '1' THEN Font = 'cursive'
+    WHEN FONTS = '2' THEN Font = 'gothic'
+    WHEN FONTS = '3' THEN Font = 'blockhead'
+    WHEN FONTS = '4' THEN Font = 'BIGWORD2'
+    WHEN FONTS = '5' THEN Font = 'tinysign'
+    OTHERWISE DO
+      IF FONTS <> '' THEN DO
+        SAY 'Invalid font selection. Please enter 1-5'
+        FONTS = ''
+      END
+      ITERATE
+    END
+  END
+ 
+  /* Process commands */
+  SELECT
+  WHEN ZCMD = 'SEND' THEN DO
+    /* Check if font and message are provided */
+    IF Font = 'nootnut' THEN DO
+      SAY 'Please select a font from 1-5'
+      ITERATE
+    END
+    IF MSG = '' THEN DO
+      SAY 'Please enter a message'
+      ITERATE
+    END
+ 
+    /* Print the banner */
+    ADDRESS COMMAND Font MSG '(STACK'
+ 
+    /* Write to file */
+    'EXECIO * DISKW BANNER OUTPUT A (FINIS'
+ 
+    SAY 'Printing banner with' Font 'font...'
+    SAY 'Message:' MSG
+ 
+    /* Execute the font command with message CURSIVE, GOTHIC, BIGWORD */ 
+
+    ADDRESS COMMAND Font MSG
+    ADDRESS COMMAND 'Print' Font 'LISTING'
+ 
+      SAY 'Print job submitted successfully!'
+    END
+ 
+    WHEN ZCMD = 'END' | ZCMD = 'CANCEL' THEN DO
+      "DISPLAY PANEL(VCFHOME)"
+      LEAVE
+    END
+ 
+    WHEN ZCMD = '' THEN NOP  /* No command entered, just redisplay */
+ 
+    OTHERWISE DO
+      SAY 'Invalid command:' ZCMD
+      SAY 'Valid commands: SEND, END, CANCEL'
+    END
+  END
+ 
+  /* Reset command for next iteration */
+  ZCMD = ''
+ 
+END
+EXIT

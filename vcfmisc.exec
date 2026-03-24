@@ -1,0 +1,81 @@
+/* REXX */
+/**********************************************************************/
+/*   CMS APPLICATION FOR PRINTING BANNERS AT VCF                      */
+/*   Developer: OKY @ IBM                                             */
+/*   Function: Allows users to play a game from a selection           */
+/*             Made for VCF                                           */
+/**********************************************************************/
+ 
+hi = '1DE8'x               /*  used to begin highlighting of text     */
+lo = '1D60'x               /*  used to end highlighting of text       */
+ 
+ADDRESS ISPEXEC
+ 
+/* Initialize variables */
+MISCS = ''
+ZCMD = ''
+ 
+/* Display panel in loop until user exits */
+DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
+ 
+  /* Display the panel */
+  "DISPLAY PANEL(VCFMISC)"
+ 
+  /* Check if user pressed PF3 or cancelled */
+  IF RC = 8 THEN DO
+    VCFHOME
+  END
+ 
+  /* Get variables from panel */
+  "VGET (F MSG ZCMD) PROFILE"
+ 
+  /* Convert to uppercase for processing */
+  MISCS = F
+  UPPER MISCS
+  UPPER ZCMD
+  /* Validate and set Miscapp */
+  Miscapp = 'nootnut'
+  SELECT
+    WHEN MISCS = '1' THEN Miscapp = 'digiclok'
+    WHEN MISCS = '2' THEN Miscapp = 'boogie'
+    WHEN MISCS = '3' THEN Miscapp = 'couch'
+    OTHERWISE DO
+      IF MISCS <> '' THEN DO
+        SAY 'Invalid Miscapp selection. Please enter 1-5'
+        MISCS = ''
+      END
+      ITERATE
+    END
+  END
+ 
+  /* Process commands */
+  SELECT
+    WHEN ZCMD = 'SEND' THEN DO
+        /* Check if Miscapp and message are provided */
+        IF Miscapp = 'nootnut' THEN DO
+        SAY 'Please select a Miscapp from 1-5'
+        ITERATE
+        END
+    
+        /* Execute the Miscapp command */
+        ADDRESS COMMAND Miscapp
+    END
+ 
+    WHEN ZCMD = 'END' | ZCMD = 'CANCEL' THEN DO
+      "DISPLAY PANEL(VCFHOME)"
+      LEAVE
+    END
+ 
+    WHEN ZCMD = '' THEN NOP  /* No command entered, just redisplay */
+ 
+    OTHERWISE DO
+      SAY 'Invalid command:' ZCMD
+      SAY 'Valid commands: SEND, END, CANCEL'
+    END
+  END
+ 
+  /* Reset command for next iteration */
+  ZCMD = ''
+ 
+END
+EXIT

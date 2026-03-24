@@ -1,0 +1,74 @@
+/* REXX */
+/**********************************************************************/
+/*   CMS APPLICATION FOR PRINTING BANNERS AT VCF                      */
+/*                dev by OKY @ IBM                                    */
+/*   FUNCTION: allows users to print banners of whatever text         */
+/*    they'd like. Comes with 3 font options: cursive, giant,         */
+/*    and block.                                                      */
+/*                                                                    */
+/**********************************************************************/
+ 
+hi = '1DE8'x               /*  used to begin highlighting of text     */
+lo = '1D60'x               /*  used to end highlighting of text       */
+ 
+ADDRESS ISPEXEC
+ 
+/* Initialize variables */
+FONTS = ''
+MSG = ''
+ZCMD = ''
+ 
+/* Display panel in loop until user exits */
+DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
+
+  /*Display home panel*/
+  "DISPLAY PANEL(VCFHOME)"
+  
+  /* Check if user pressed PF3 or cancelled */
+  IF RC = 8 THEN LEAVE
+
+
+  "VGET (F ZCMD) PROFILE"
+  CHOICE = F
+
+
+  /* Process commands */
+  SELECT
+  WHEN ZCMD = 'SEND' THEN DO
+    /* Check if choice is provided */
+    IF CHOICE > 3 | CHOICE < 1 THEN DO
+      SAY 'Please select a choice from 1 to 3'
+      ITERATE
+    END
+    IF CHOICE = '' THEN DO
+      SAY 'Please select a choice from 1 to 3'
+      ITERATE
+      SELECT
+    END
+    WHEN CHOICE = '1' THEN NEXTP = 'VCFPRINT'
+    WHEN CHOICE = '2' THEN NEXTP = 'VCFGAMES'
+    WHEN CHOICE = '3' THEN NEXTP = 'MISC'
+    /*Display the next panel*/
+    "DISPLAY PANEL(" + NEXTP +")"
+  END
+ 
+ 
+    WHEN ZCMD = 'END' | ZCMD = 'CANCEL' THEN DO
+      SAY 'Goodbye...'
+      LEAVE
+    END
+ 
+    WHEN ZCMD = '' THEN NOP  /* No command entered, just redisplay */
+ 
+    OTHERWISE DO
+      SAY 'Invalid command:' ZCMD
+      SAY 'Valid commands: SEND, END, CANCEL'
+    END
+  END
+ 
+  /* Reset command for next iteration */
+  ZCMD = ''
+ 
+END
+ 
+EXIT
