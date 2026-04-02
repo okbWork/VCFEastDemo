@@ -1,40 +1,47 @@
 /* REXX */
 /**********************************************************************/
-/*   CMS APPLICATION FOR PRINTING BANNERS AT VCF                      */
+/*   CMS APPLICATION FOR GAMES AT VCF                                 */
 /*   Developer: OKY @ IBM                                             */
 /*   Function: Allows users to play a game from a selection           */
 /*             Made for VCF                                           */
 /**********************************************************************/
- 
-hi = '1DE8'x               /*  used to begin highlighting of text     */
-lo = '1D60'x               /*  used to end highlighting of text       */
- 
-ADDRESS ISPEXEC
- 
-/* Initialize variables */
-GAMES = ''
-ZCMD = ''
- 
-/* Display panel in loop until user exits */
-DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
- 
-  /* Display the panel */
-  "DISPLAY PANEL(VCFGAMES)"
- 
-  /* Check if user pressed PF3 or cancelled */
-  IF RC = 8 THEN DO
-    VCFHOME
+
+DO FOREVER
+  /* Clear screen */
+  'VMFCLEAR'
+  
+  /* Display menu */
+  SAY ''
+  SAY '======================================================================'
+  SAY '                        VCF EAST GAMES                              '
+  SAY '======================================================================'
+  SAY ''
+  SAY 'Available games:'
+  SAY ''
+  SAY '  1) Space Invaders'
+  SAY '  2) SUBHUNT'
+  SAY '  3) BLACKJACK'
+  SAY '  4) Mastermind'
+  SAY '  5) Checkers'
+  SAY '  6) KALAH'
+  SAY ''
+  SAY '  X) Return to Main Menu'
+  SAY ''
+  SAY '======================================================================'
+  SAY ''
+  
+  /* Get game choice */
+  SAY 'Which game would you like? (Enter 1-6 or X): '
+  PULL GAMES
+  GAMES = STRIP(GAMES)
+  
+  /* Check for exit */
+  IF GAMES = 'X' | GAMES = 'x' THEN DO
+    RETURN
   END
- 
-  /* Get variables from panel */
-  "VGET (F MSG ZCMD) PROFILE"
- 
-  /* Convert to uppercase for processing */
-  GAMES = F
-  UPPER GAMES
-  UPPER ZCMD
-  /* Validate and set Game */
-  Game = 'nootnut'
+  
+  /* Validate game selection */
+  Game = ''
   SELECT
     WHEN GAMES = '1' THEN Game = 'INV'
     WHEN GAMES = '2' THEN Game = 'SUBHUNT'
@@ -43,42 +50,24 @@ DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
     WHEN GAMES = '5' THEN Game = 'CHECKERS'
     WHEN GAMES = '6' THEN Game = 'KALAH'
     OTHERWISE DO
-      IF GAMES <> '' THEN DO
-        SAY 'Invalid Game selection. Please enter 1-6'
-        GAMES = ''
-      END
+      SAY ''
+      SAY 'Invalid game selection. Please enter 1-6'
+      SAY 'Press ENTER to continue...'
+      PULL .
       ITERATE
     END
   END
- 
-  /* Process commands */
-  SELECT
-    WHEN ZCMD = 'SEND' THEN DO
-        /* Check if Game and message are provided */
-        IF Game = 'nootnut' THEN DO
-        SAY 'Please select a Game from 1-6'
-        ITERATE
-        END
-    
-        /* Execute the Game command */
-        ADDRESS COMMAND Game
-    END
- 
-    WHEN ZCMD = 'END' | ZCMD = 'CANCEL' THEN DO
-      "DISPLAY PANEL(VCFHOME)"
-      LEAVE
-    END
- 
-    WHEN ZCMD = '' THEN NOP  /* No command entered, just redisplay */
- 
-    OTHERWISE DO
-      SAY 'Invalid command:' ZCMD
-      SAY 'Valid commands: SEND, END, CANCEL'
-    END
-  END
- 
-  /* Reset command for next iteration */
-  ZCMD = ''
- 
+  
+  /* Launch the game */
+  SAY ''
+  SAY 'Launching' Game '...'
+  SAY ''
+  
+  Game
+  
+  SAY ''
+  SAY 'Press ENTER to return to games menu...'
+  PULL .
 END
-EXIT
+
+EXIT 0

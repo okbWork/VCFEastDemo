@@ -1,81 +1,67 @@
 /* REXX */
 /**********************************************************************/
-/*   CMS APPLICATION FOR PRINTING BANNERS AT VCF                      */
+/*   CMS APPLICATION FOR MISC APPS AT VCF                             */
 /*   Developer: OKY @ IBM                                             */
-/*   Function: Allows users to play a game from a selection           */
+/*   Function: Allows users to run misc applications                  */
 /*             Made for VCF                                           */
 /**********************************************************************/
- 
-hi = '1DE8'x               /*  used to begin highlighting of text     */
-lo = '1D60'x               /*  used to end highlighting of text       */
- 
-ADDRESS ISPEXEC
- 
-/* Initialize variables */
-MISCS = ''
-ZCMD = ''
- 
-/* Display panel in loop until user exits */
-DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
- 
-  /* Display the panel */
-  "DISPLAY PANEL(VCFMISC)"
- 
-  /* Check if user pressed PF3 or cancelled */
-  IF RC = 8 THEN DO
-    VCFHOME
+
+DO FOREVER
+  /* Clear screen */
+  'VMFCLEAR'
+  
+  /* Display menu */
+  SAY ''
+  SAY '======================================================================'
+  SAY '                  VCF EAST MISC APPLICATIONS                        '
+  SAY '======================================================================'
+  SAY ''
+  SAY 'Available programs:'
+  SAY ''
+  SAY '  1) Digital Clock'
+  SAY '  2) Boogie!'
+  SAY '  3) Couch'
+  SAY ''
+  SAY '  X) Return to Main Menu'
+  SAY ''
+  SAY '======================================================================'
+  SAY ''
+  
+  /* Get application choice */
+  SAY 'Which application would you like? (Enter 1-3 or X): '
+  PULL MISCS
+  MISCS = STRIP(MISCS)
+  
+  /* Check for exit */
+  IF MISCS = 'X' | MISCS = 'x' THEN DO
+    RETURN
   END
- 
-  /* Get variables from panel */
-  "VGET (F MSG ZCMD) PROFILE"
- 
-  /* Convert to uppercase for processing */
-  MISCS = F
-  UPPER MISCS
-  UPPER ZCMD
-  /* Validate and set Miscapp */
-  Miscapp = 'nootnut'
+  
+  /* Validate application selection */
+  Miscapp = ''
   SELECT
     WHEN MISCS = '1' THEN Miscapp = 'digiclok'
     WHEN MISCS = '2' THEN Miscapp = 'boogie'
     WHEN MISCS = '3' THEN Miscapp = 'couch'
     OTHERWISE DO
-      IF MISCS <> '' THEN DO
-        SAY 'Invalid Miscapp selection. Please enter 1-5'
-        MISCS = ''
-      END
+      SAY ''
+      SAY 'Invalid application selection. Please enter 1-3'
+      SAY 'Press ENTER to continue...'
+      PULL .
       ITERATE
     END
   END
- 
-  /* Process commands */
-  SELECT
-    WHEN ZCMD = 'SEND' THEN DO
-        /* Check if Miscapp and message are provided */
-        IF Miscapp = 'nootnut' THEN DO
-        SAY 'Please select a Miscapp from 1-5'
-        ITERATE
-        END
-    
-        /* Execute the Miscapp command */
-        ADDRESS COMMAND Miscapp
-    END
- 
-    WHEN ZCMD = 'END' | ZCMD = 'CANCEL' THEN DO
-      "DISPLAY PANEL(VCFHOME)"
-      LEAVE
-    END
- 
-    WHEN ZCMD = '' THEN NOP  /* No command entered, just redisplay */
- 
-    OTHERWISE DO
-      SAY 'Invalid command:' ZCMD
-      SAY 'Valid commands: SEND, END, CANCEL'
-    END
-  END
- 
-  /* Reset command for next iteration */
-  ZCMD = ''
- 
+  
+  /* Launch the application */
+  SAY ''
+  SAY 'Launching' Miscapp '...'
+  SAY ''
+  
+  Miscapp
+  
+  SAY ''
+  SAY 'Press ENTER to return to misc applications menu...'
+  PULL .
 END
-EXIT
+
+EXIT 0

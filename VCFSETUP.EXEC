@@ -1,0 +1,22 @@
+/* REXX */
+/**********************************************************************/
+/*   SETUP EXEC FOR VCF EAST ISPF APPLICATION                         */
+/*   This EXEC allocates the necessary ISPF libraries                 */
+/**********************************************************************/
+
+ADDRESS COMMAND
+
+/* Access the A-disk if not already accessed */
+'ACCESS 191 A'
+
+/* Set up ISPF environment variables */
+'GLOBALV SELECT ISPFVARS SETL ISPPLIB A'
+'GLOBALV SELECT ISPFVARS SETL SYSPROC A'
+
+SAY 'ISPF search paths configured:'
+SAY '  ISPPLIB = A-disk (for PANEL files)'
+SAY '  SYSPROC = A-disk (for EXEC files)'
+SAY ''
+SAY 'You can now run VCFHOME from ISPF Command Shell'
+
+EXIT 0

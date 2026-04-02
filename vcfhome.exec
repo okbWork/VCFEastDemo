@@ -1,74 +1,70 @@
 /* REXX */
 /**********************************************************************/
-/*   CMS APPLICATION FOR PRINTING BANNERS AT VCF                      */
+/*   CMS APPLICATION FOR VCF EAST DEMO                                */
 /*                dev by OKY @ IBM                                    */
-/*   FUNCTION: allows users to print banners of whatever text         */
-/*    they'd like. Comes with 3 font options: cursive, giant,         */
-/*    and block.                                                      */
+/*   FUNCTION: Main menu for VCF East applications                    */
 /*                                                                    */
 /**********************************************************************/
- 
-hi = '1DE8'x               /*  used to begin highlighting of text     */
-lo = '1D60'x               /*  used to end highlighting of text       */
- 
-ADDRESS ISPEXEC
- 
-/* Initialize variables */
-FONTS = ''
-MSG = ''
-ZCMD = ''
- 
-/* Display panel in loop until user exits */
-DO WHILE ZCMD <> 'END' & ZCMD <> 'CANCEL'
 
-  /*Display home panel*/
-  "DISPLAY PANEL(VCFHOME)"
+/* Clear screen */
+'VMFCLEAR'
+
+DO FOREVER
+  /* Display menu */
+  SAY ''
+  SAY '======================================================================'
+  SAY '                    VCF EAST HOME PAGE                              '
+  SAY '======================================================================'
+  SAY ''
+  SAY 'Welcome to the VCF East Demo Applications!'
+  SAY ''
+  SAY 'Please select an option:'
+  SAY ''
+  SAY '  1) Printing Banners'
+  SAY '  2) Games'
+  SAY '  3) Misc. Applications'
+  SAY ''
+  SAY '  X) Exit'
+  SAY ''
+  SAY '======================================================================'
+  SAY ''
   
-  /* Check if user pressed PF3 or cancelled */
-  IF RC = 8 THEN LEAVE
-
-
-  "VGET (F ZCMD) PROFILE"
-  CHOICE = F
-
-
-  /* Process commands */
+  /* Get user input */
+  PULL CHOICE
+  CHOICE = STRIP(CHOICE)
+  
+  /* Process choice */
   SELECT
-  WHEN ZCMD = 'SEND' THEN DO
-    /* Check if choice is provided */
-    IF CHOICE > 3 | CHOICE < 1 THEN DO
-      SAY 'Please select a choice from 1 to 3'
-      ITERATE
+    WHEN CHOICE = '1' THEN DO
+      'EXEC VCFPRINT'
     END
-    IF CHOICE = '' THEN DO
-      SAY 'Please select a choice from 1 to 3'
-      ITERATE
-      SELECT
+    
+    WHEN CHOICE = '2' THEN DO
+      'EXEC VCFGAMES'
     END
-    WHEN CHOICE = '1' THEN NEXTP = 'VCFPRINT'
-    WHEN CHOICE = '2' THEN NEXTP = 'VCFGAMES'
-    WHEN CHOICE = '3' THEN NEXTP = 'MISC'
-    /*Display the next panel*/
-    "DISPLAY PANEL(" + NEXTP +")"
-  END
- 
- 
-    WHEN ZCMD = 'END' | ZCMD = 'CANCEL' THEN DO
+    
+    WHEN CHOICE = '3' THEN DO
+      'EXEC VCFMISC'
+    END
+    
+    WHEN CHOICE = 'X' | CHOICE = 'x' THEN DO
+      SAY ''
+      SAY 'Thank you for using VCF East Demo!'
       SAY 'Goodbye...'
-      LEAVE
+      EXIT 0
     END
- 
-    WHEN ZCMD = '' THEN NOP  /* No command entered, just redisplay */
- 
+    
     OTHERWISE DO
-      SAY 'Invalid command:' ZCMD
-      SAY 'Valid commands: SEND, END, CANCEL'
+      SAY ''
+      SAY 'Invalid choice. Please enter 1, 2, 3, or X'
+      SAY 'Press ENTER to continue...'
+      PULL .
+      'VMFCLEAR'
     END
   END
- 
-  /* Reset command for next iteration */
-  ZCMD = ''
- 
+  
+  /* Clear screen for next iteration */
+  'VMFCLEAR'
 END
- 
-EXIT
+
+EXIT 0
