@@ -5,63 +5,63 @@
 /*   Function: Allows users to run misc applications                  */
 /*             Made for VCF                                           */
 /**********************************************************************/
-
+ 
 DO FOREVER
   /* Clear screen */
   'VMFCLEAR'
-  
+ 
   /* Display menu */
   SAY ''
-  SAY '======================================================================'
-  SAY '                  VCF EAST MISC APPLICATIONS                        '
-  SAY '======================================================================'
+  SAY '==============================================================================='
+  SAY '                            DEMOSCENE APPLICATIONS'
+  SAY '==============================================================================='
   SAY ''
   SAY 'Available programs:'
   SAY ''
   SAY '  1) Digital Clock'
-  SAY '  2) Boogie!'
-  SAY '  3) Couch'
+  SAY '  2) Maze'
+  SAY '  3) Magic 8 Ball'
   SAY ''
   SAY '  X) Return to Main Menu'
   SAY ''
-  SAY '======================================================================'
+  SAY '==============================================================================='
   SAY ''
-  
+ 
   /* Get application choice */
   SAY 'Which application would you like? (Enter 1-3 or X): '
   PULL MISCS
   MISCS = STRIP(MISCS)
-  
+ 
   /* Check for exit */
   IF MISCS = 'X' | MISCS = 'x' THEN DO
     RETURN
   END
-  
+ 
   /* Validate application selection */
   Miscapp = ''
   SELECT
     WHEN MISCS = '1' THEN Miscapp = 'digiclok'
-    WHEN MISCS = '2' THEN Miscapp = 'boogie'
-    WHEN MISCS = '3' THEN Miscapp = 'couch'
+    WHEN MISCS = '2' THEN Miscapp = 'maze'
+    WHEN MISCS = '3' THEN Miscapp = '8ball'
     OTHERWISE DO
-      SAY ''
-      SAY 'Invalid application selection. Please enter 1-3'
+      SAY 'Invalid application selection. Please enter 1-3 or X.'
       SAY 'Press ENTER to continue...'
       PULL .
       ITERATE
     END
   END
-  
+ 
   /* Launch the application */
+  'VMFCLEAR'
   SAY ''
   SAY 'Launching' Miscapp '...'
   SAY ''
-  
+ 
   Miscapp
-  
+ 
   SAY ''
   SAY 'Press ENTER to return to misc applications menu...'
   PULL .
 END
-
+ 
 EXIT 0

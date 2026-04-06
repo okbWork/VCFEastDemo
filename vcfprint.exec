@@ -6,79 +6,79 @@
 /*    they'd like. Comes with 5 font options                          */
 /*                                                                    */
 /**********************************************************************/
-
+ 
 DO FOREVER
   /* Clear screen */
   'VMFCLEAR'
-  
+ 
   /* Display menu */
   SAY ''
-  SAY '======================================================================'
-  SAY '                VCF EAST BANNER MESSAGE PRINTING                    '
-  SAY '======================================================================'
+  SAY '==============================================================================='
+  SAY '                                 VCF SIGN SHOP'
+  SAY '==============================================================================='
   SAY ''
   SAY 'Available fonts:'
   SAY ''
-  SAY '  1) Cursive   (Landscape text)'
-  SAY '  2) Gothic    (Landscape text)'
-  SAY '  3) Blockhead (Landscape text)'
-  SAY '  4) BIGWORD2  (Landscape text)'
-  SAY '  5) Tinysign  (Portrait text)'
+  SAY '  1) Bigword2  (BIG banner)'
+  SAY '  2) Blockhead (Sign)'
+  SAY '  3) Cursive   (Banner)'
+  SAY '  4) Gothic    (Banner)'
+  SAY '  5) Tinysign  (Sign)'
   SAY ''
   SAY '  X) Return to Main Menu'
   SAY ''
-  SAY '======================================================================'
+  SAY '==============================================================================='
   SAY ''
-  
+ 
   /* Get font choice */
   SAY 'Which font would you like? (Enter 1-5 or X): '
   PULL FONTS
   FONTS = STRIP(FONTS)
-  
+ 
   /* Check for exit */
   IF FONTS = 'X' | FONTS = 'x' THEN DO
     RETURN
   END
-  
+ 
   /* Validate font selection */
   Font = ''
   SELECT
-    WHEN FONTS = '1' THEN Font = 'cursive'
-    WHEN FONTS = '2' THEN Font = 'gothic'
-    WHEN FONTS = '3' THEN Font = 'blockhead'
-    WHEN FONTS = '4' THEN Font = 'BIGWORD2'
-    WHEN FONTS = '5' THEN Font = 'tinysign'
+    WHEN FONTS = '1' THEN Font = 'CURSIVE'  /* Disable BIGWORD2 until the event */
+    WHEN FONTS = '2' THEN Font = 'BLOCHEAD'
+    WHEN FONTS = '3' THEN Font = 'CURSIVE'
+    WHEN FONTS = '4' THEN Font = 'CURSIVE'  /* Until we can fix GOTHIC */
+    WHEN FONTS = '5' THEN Font = 'TINYSIGN'
     OTHERWISE DO
-      SAY ''
       SAY 'Invalid font selection. Please enter 1-5'
       SAY 'Press ENTER to continue...'
       PULL .
       ITERATE
     END
   END
-  
+ 
   /* Get message */
+  'VMFCLEAR'
   SAY ''
   SAY 'Enter your message (try to keep it around 20 characters):'
   PULL MSG
   MSG = STRIP(MSG)
-  
+ 
   IF MSG = '' THEN DO
     SAY ''
     SAY 'No message entered. Press ENTER to continue...'
     PULL .
     ITERATE
   END
-  
+ 
   /* Print the banner */
   SAY ''
   SAY 'Printing banner with' Font 'font...'
   SAY 'Message:' MSG
   SAY ''
-  
+ 
   /* Generate the banner (this creates the LISTING file) */
   Font MSG
-  
+ 
   /* Print the listing file */
   'PRINT' Font 'LISTING'
   IF RC = 0 THEN DO
@@ -90,10 +90,13 @@ DO FOREVER
     SAY 'Note: Print command returned RC=' RC
     SAY 'The banner was displayed but may not have printed.'
   END
-  
+ 
+  /* Delete the files that we made */
+  'PIPE CMS ERASE' Font 'LISTING A | HOLE'
+ 
   SAY ''
   SAY 'Press ENTER to continue...'
   PULL .
 END
-
+ 
 EXIT 0

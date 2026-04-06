@@ -5,69 +5,81 @@
 /*   Function: Allows users to play a game from a selection           */
 /*             Made for VCF                                           */
 /**********************************************************************/
-
+ 
 DO FOREVER
   /* Clear screen */
   'VMFCLEAR'
-  
+ 
   /* Display menu */
   SAY ''
-  SAY '======================================================================'
-  SAY '                        VCF EAST GAMES                              '
-  SAY '======================================================================'
+  SAY '==============================================================================='
+  SAY '                               MAINFRAME ARCADE'
+  SAY '==============================================================================='
   SAY ''
-  SAY 'Available games:'
+  SAY 'Would you like to play a game?'
   SAY ''
-  SAY '  1) Space Invaders'
-  SAY '  2) SUBHUNT'
-  SAY '  3) BLACKJACK'
-  SAY '  4) Mastermind'
-  SAY '  5) Checkers'
-  SAY '  6) KALAH'
+  SAY '  1) Adventure     6) Hunt the Wumpus    B) Othello           G) Subhunt'
+  SAY '  2) Backgammon    7) Kalah              C) Slash             H) Tank'
+  SAY '  3) Blackjack     8) Lunar Lander       D) Snake             I) Tic-Tac-Toe'
+  SAY '  4) Checkers      9) Mastermind         E) Space Invaders    J) Wordle'
+  SAY '  5) Craps         A) Oregon Trail       F) Star Trek         K) Zork'
   SAY ''
   SAY '  X) Return to Main Menu'
   SAY ''
-  SAY '======================================================================'
+  SAY '==============================================================================='
   SAY ''
-  
+ 
   /* Get game choice */
-  SAY 'Which game would you like? (Enter 1-6 or X): '
+  SAY 'Which game would you like? (Enter 1-9, A-K, or X):'
   PULL GAMES
   GAMES = STRIP(GAMES)
-  
+ 
   /* Check for exit */
-  IF GAMES = 'X' | GAMES = 'x' THEN DO
+  IF GAMES = 'X' THEN DO
     RETURN
   END
-  
+ 
   /* Validate game selection */
   Game = ''
   SELECT
-    WHEN GAMES = '1' THEN Game = 'INV'
-    WHEN GAMES = '2' THEN Game = 'SUBHUNT'
-    WHEN GAMES = '3' THEN Game = 'BLAKJACK'
-    WHEN GAMES = '4' THEN Game = 'MASTER'
-    WHEN GAMES = '5' THEN Game = 'CHECKERS'
-    WHEN GAMES = '6' THEN Game = 'KALAH'
+    WHEN GAMES = '1' THEN Game = 'ADVENTUR'
+    WHEN GAMES = '2' THEN Game = 'BKG'
+    WHEN GAMES = '3' THEN Game = 'BJ'
+    WHEN GAMES = '4' THEN Game = 'CHECKERS'
+    WHEN GAMES = '5' THEN Game = 'CRAPS'
+    WHEN GAMES = '6' THEN Game = 'WUMPUS'
+    WHEN GAMES = '7' THEN Game = 'KALAH'
+    WHEN GAMES = '8' THEN Game = 'LUNAR'
+    WHEN GAMES = '9' THEN Game = 'MASTER'
+    WHEN GAMES = 'A' THEN Game = 'OREGON'
+    WHEN GAMES = 'B' THEN Game = 'OTHELLO'
+    WHEN GAMES = 'C' THEN Game = 'SLASH'
+    WHEN GAMES = 'D' THEN Game = 'SNAKE'
+    WHEN GAMES = 'E' THEN Game = 'INV2'
+    WHEN GAMES = 'F' THEN Game = 'STARTREK'
+    WHEN GAMES = 'G' THEN Game = 'SUBHUNT'
+    WHEN GAMES = 'H' THEN Game = 'TANK'
+    WHEN GAMES = 'I' THEN Game = 'TICTACTO'
+    WHEN GAMES = 'J' THEN Game = 'WORDLE'
+    WHEN GAMES = 'K' THEN Game = 'ZORK'
     OTHERWISE DO
-      SAY ''
-      SAY 'Invalid game selection. Please enter 1-6'
+      SAY 'Invalid game selection. Please enter 1-9, A-K, or X.'
       SAY 'Press ENTER to continue...'
       PULL .
       ITERATE
     END
   END
-  
+ 
   /* Launch the game */
-  SAY ''
-  SAY 'Launching' Game '...'
-  SAY ''
-  
+  SAY 'Launching' Game || '...'
+  SLEEP 1 SEC
+  'VMFCLEAR'
+ 
   Game
-  
+ 
   SAY ''
   SAY 'Press ENTER to return to games menu...'
   PULL .
 END
-
+ 
 EXIT 0
