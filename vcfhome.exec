@@ -5,66 +5,104 @@
 /*   FUNCTION: Main menu for VCF East applications                    */
 /*                                                                    */
 /**********************************************************************/
-
+ 
 /* Clear screen */
 'VMFCLEAR'
-
+ 
 DO FOREVER
   /* Display menu */
   SAY ''
-  SAY '======================================================================'
-  SAY '                    VCF EAST HOME PAGE                              '
-  SAY '======================================================================'
+  SAY '==============================================================================='
+  SAY '              CLASSICAL COMPUTING LABORATORY AT IBM POUGHKEEPSIE'
+  SAY '==============================================================================='
   SAY ''
-  SAY 'Welcome to the VCF East Demo Applications!'
+  SAY 'Available activities:'
   SAY ''
-  SAY 'Please select an option:'
+  SAY '  1) Create a Banner or Sign'
+  SAY '  2) Play a Game'
+  SAY '  3) View Cool Demos'
+  SAY '  4) Explore our BBS'
+  SAY '  5) Talk with our Advanced AI Chatbot'
   SAY ''
-  SAY '  1) Printing Banners'
-  SAY '  2) Games'
-  SAY '  3) Misc. Applications'
+  SAY '  C) Exit to CMS'
+  SAY '  X) Logoff VM'
   SAY ''
-  SAY '  X) Exit'
+  SAY '==============================================================================='
   SAY ''
-  SAY '======================================================================'
-  SAY ''
-  
+ 
   /* Get user input */
+  SAY 'Which activity would you like to try? (Enter 1-5, C, or X):'
   PULL CHOICE
   CHOICE = STRIP(CHOICE)
-  
+ 
   /* Process choice */
   SELECT
     WHEN CHOICE = '1' THEN DO
       'EXEC VCFPRINT'
     END
-    
+ 
     WHEN CHOICE = '2' THEN DO
       'EXEC VCFGAMES'
     END
-    
+ 
     WHEN CHOICE = '3' THEN DO
       'EXEC VCFMISC'
     END
-    
-    WHEN CHOICE = 'X' | CHOICE = 'x' THEN DO
+ 
+    WHEN CHOICE = '4' THEN DO
+      'FORALIST ( SHOWALL'
+    END
+ 
+    WHEN CHOICE = '5' THEN DO
+      'VMFCLEAR'
       SAY ''
-      SAY 'Thank you for using VCF East Demo!'
-      SAY 'Goodbye...'
+      SAY 'Loading LLM, please be patient...'
+      'PIPE CMS BASIC ELIZA | HOLE'
+      SAY ''
+      SAY 'This is our advanced AI agent, the culmination of years of research.'
+      SAY "Unfortunately she can be quite sensitive, so never tell her to 'shut up'."
+      SLEEP 3 SEC
+      SAY ''
+      SAY 'Press ENTER when ready.'
+      PULL .
+      'BASICRUN ELIZA'
+      'VMFCLEAR'
+      SAY 'Returning to menu...'
+      'PIPE CMS ERASE ELIZA * A | HOLE'
+    END
+ 
+    WHEN CHOICE = 'C' | CHOICE = 'c' THEN DO
+      'VMFCLEAR'
+      SAY ' +---------------------------------------------------------------------------+ '
+      SAY ' |           WELCOME TO THE CONVERSATIONAL MONITORING SYSTEM (CMS)           | '
+      SAY ' +---------------------------------------------------------------------------+ '
+      SAY ' |                                                                           | '
+      SAY " |     1. To log off of VM, type 'logoff' and then hit the ENTER key         | "
+      SAY ' |                                                                           | '
+      SAY " |     2. To re-launch the menu system, type 'VCFHOME' and hit ENTER         | "
+      SAY ' |                                                                           | '
+      SAY " |     3. For an introduction to CMS, type 'help task task' and hit ENTER    | "
+      SAY ' |                                                                           | '
+      SAY ' +---------------------------------------------------------------------------+ '
+      SAY ''
       EXIT 0
     END
-    
+ 
+    WHEN CHOICE = 'X' | CHOICE = 'x' THEN DO
+      'TERM MORE 0 0'
+      'LOGOFF HOLD'
+    END
+ 
     OTHERWISE DO
-      SAY ''
-      SAY 'Invalid choice. Please enter 1, 2, 3, or X'
+      SAY 'Invalid choice. Please enter a valid number, C, or X'
       SAY 'Press ENTER to continue...'
       PULL .
       'VMFCLEAR'
     END
   END
-  
+ 
   /* Clear screen for next iteration */
   'VMFCLEAR'
 END
-
+ 
 EXIT 0
